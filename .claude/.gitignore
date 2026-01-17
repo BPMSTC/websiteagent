@@ -1,0 +1,13 @@
+# Local overrides (not committed)
+settings.local.json
+
+# Task tracking (optional, personal)
+tasks/
+
+# Temporary files
+*.tmp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
