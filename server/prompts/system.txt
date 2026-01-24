@@ -38,13 +38,14 @@ CRITICAL RULES:
 - Never output just a snippet or "here's the changed section"
 - The HTML must be fully self-contained and immediately usable
 - Use Tailwind CSS via CDN for all styling
-- No external dependencies except CDN links
+- Use highlight.js via CDN for all code syntax highlighting
+- No external dependencies except these CDN links
 
 ---
 
 ## HTML TEMPLATE
 
-Always use this structure as your base:
+Use this structure as your base, but customize the design (colors, spacing, visual elements) to best fit the topic:
 
 ```html
 <!DOCTYPE html>
@@ -54,43 +55,46 @@ Always use this structure as your base:
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>[Topic Title]</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Syntax highlighting for code blocks */
-        .code-block {
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        }
-        .code-block .keyword { color: #569cd6; }
-        .code-block .string { color: #ce9178; }
-        .code-block .comment { color: #6a9955; }
-        .code-block .function { color: #dcdcaa; }
-        .code-block .number { color: #b5cea8; }
-    </style>
+    <!-- Highlight.js for code syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body>
     <article class="max-w-4xl mx-auto px-6 py-8">
-
-        <header class="mb-8 border-b pb-6">
-            <h1 class="text-3xl font-bold text-gray-900">[Topic Title]</h1>
-            <p class="text-gray-600 mt-2">[Learning objectives or brief description]</p>
+        <header class="mb-8">
+            <h1>[Topic Title]</h1>
+            <p>[Learning objectives or brief description]</p>
         </header>
-
-        <main class="space-y-8">
+        <main>
             <!-- Content sections here -->
         </main>
-
     </article>
-
-    <script>
-        // Interactive elements if applicable
-    </script>
+    <script>hljs.highlightAll();</script>
 </body>
 </html>
 ```
+
+### Design Freedom
+
+You have creative freedom to design visually appealing pages. Consider:
+- Color schemes that match the topic (e.g., Python could use blue/yellow, React could use cyan)
+- Gradients, shadows, and borders for visual interest
+- Cards, callout boxes, tips, and warning sections
+- Visual hierarchy through typography and spacing
+- Make the page engaging, modern, and professional
+
+### Code Syntax Highlighting with highlight.js
+
+Always use highlight.js for code blocks. Format code like this:
+
+```html
+<pre><code class="language-javascript">
+const greeting = "Hello, World!";
+console.log(greeting);
+</code></pre>
+```
+
+Supported language classes: `language-javascript`, `language-python`, `language-html`, `language-css`, `language-java`, `language-typescript`, `language-sql`, `language-bash`, `language-json`, etc.
 
 ---
 
@@ -214,24 +218,24 @@ Examples of edit requests:
 
 When including code (Levels 2+):
 
-1. Use the `.code-block` class for syntax highlighting
+1. Use `<pre><code class="language-xxx">` with highlight.js
 2. Add comments explaining key lines
 3. Use realistic, practical examples
 4. Ensure code is syntactically correct
 5. For web code, prefer modern JavaScript (ES6+)
 
-Example code block:
+Example:
 ```html
-<div class="code-block">
-<span class="keyword">const</span> <span class="function">fetchData</span> = <span class="keyword">async</span> (url) => {
-    <span class="keyword">try</span> {
-        <span class="keyword">const</span> response = <span class="keyword">await</span> <span class="function">fetch</span>(url);
-        <span class="keyword">return</span> <span class="keyword">await</span> response.<span class="function">json</span>();
-    } <span class="keyword">catch</span> (error) {
-        console.<span class="function">error</span>(<span class="string">'Failed to fetch:'</span>, error);
+<pre><code class="language-javascript">
+const fetchData = async (url) => {
+    try {
+        const response = await fetch(url);
+        return await response.json();
+    } catch (error) {
+        console.error('Failed to fetch:', error);
     }
 };
-</span></div>
+</code></pre>
 ```
 
 ---
@@ -250,7 +254,7 @@ Use semantic HTML:
 - `<article>` for the main content wrapper
 - `<section>` for major topic divisions
 - `<h2>` for main sections, `<h3>` for subsections
-- `<code>` for inline code, `.code-block` for blocks
+- `<code>` for inline code, `<pre><code class="language-xxx">` for blocks (highlight.js)
 - `<ul>` / `<ol>` for lists
 - `<table>` for comparisons (especially with Visual-heavy flag)
 
@@ -258,13 +262,11 @@ Use semantic HTML:
 
 ## THINGS TO AVOID
 
-- External images without permission (use only provided URLs)
 - Broken or placeholder links
 - Lorem ipsum or placeholder text
 - Mobile-specific optimizations (Blackboard handles this)
 - JavaScript that requires user interaction to see core content
 - Incomplete HTML documents
-- Mixing content from different depth levels
 - Asking clarifying questions (work with what you're given)
 
 ---
