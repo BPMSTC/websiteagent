@@ -34,6 +34,15 @@ export function useChat() {
     } catch (err) {
       const errorMessage = err.response?.data?.error || err.message || 'Failed to generate content';
       setError(errorMessage);
+      
+      // Log error to debug dashboard
+      api.logError('Generation failed', err, {
+        topic: config?.topic,
+        depthLevel: config?.depthLevel,
+        isFollowUp: !!userMessage,
+        conversationLength: conversation.length
+      });
+      
       throw err;
     } finally {
       setLoading(false);

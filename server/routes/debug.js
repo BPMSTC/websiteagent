@@ -1,5 +1,5 @@
 import express from 'express';
-import { getRecentActivity, getStats, clearLog } from '../services/debugLog.js';
+import { getRecentActivity, getStats, clearLog, log, LogType } from '../services/debugLog.js';
 
 const router = express.Router();
 
@@ -23,6 +23,17 @@ router.get('/', (req, res) => {
     stats: getStats(),
     activity: getRecentActivity(limit)
   });
+});
+
+// Log an error from the client
+router.post('/log-error', (req, res) => {
+  const { action, error, details } = req.body;
+  log(LogType.ERROR, action || 'Client error', {
+    source: 'client',
+    error: error || 'Unknown error',
+    ...details
+  });
+  res.json({ success: true });
 });
 
 // Clear the log
