@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { generate as claudeGenerate } from '../services/claude.js';
-import { processImages, buildImageContext } from '../services/imageProcessor.js';
+import { processImages, buildImageContext, processImagePlaceholders } from '../services/imageProcessor.js';
 import { verifyGeneratedContent, buildFixPrompt, requiresFix } from '../services/verification.js';
 import { log, LogType } from '../services/debugLog.js';
 
@@ -107,10 +107,16 @@ router.post('/', async (req, res) => {
       imagesSuccessful: processedImages.filter(i => i.success).length
     });
 
+    // Process any [IMAGE: ...] placeholders in the HTML (works for both initial and follow-up)
+    const { html: finalHtml, generatedImages } = await processImagePlaceholders(html);
+
     res.json({
       message,
-      html,
-      imagesGenerated: processedImages.filter(img => img.type === 'generated' && img.success)
+      html: finalHtml,
+      imagesGenerated: [
+        ...processedImages.filter(img => img.type === 'generated' && img.success),
+        ...generatedImages
+      ]
     });
 
   } catch (error) {

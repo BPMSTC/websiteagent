@@ -108,3 +108,79 @@ export function buildImageContext(processedImages) {
 
   return `\n\nIMAGES AVAILABLE (use these exact URLs in your HTML):\n${lines.join('\n')}`;
 }
+
+/**
+ * Process [IMAGE: description] placeholders in HTML
+ * Generates images and replaces placeholders with permanent URLs
+ */
+export async function processImagePlaceholders(html) {
+  if (!html) {
+    return { html, generatedImages: [] };
+  }
+
+  // Find all [IMAGE: ...] placeholders
+  const placeholderRegex = /\[IMAGE:\s*([^\]]+)\]/gi;
+  const matches = [...html.matchAll(placeholderRegex)];
+
+  if (matches.length === 0) {
+    return { html, generatedImages: [] };
+  }
+
+  log(LogType.INFO, `Found ${matches.length} image placeholder(s) to process`);
+
+  const generatedImages = [];
+  let processedHtml = html;
+
+  // Process each placeholder
+  for (const match of matches) {
+    const fullMatch = match[0]; // e.g., [IMAGE: red barn in countryside]
+    const description = match[1].trim(); // e.g., "red barn in countryside"
+
+    try {
+      log(LogType.INFO, 'Generating image from placeholder', { description });
+
+      // Generate the image
+      const tempUrl = await generateWithDalle(description, 'educational');
+
+      // Upload to Cloudinary for permanent hosting
+      const permanentUrl = await uploadFromUrl(tempUrl);
+
+      log(LogType.INFO, 'Placeholder image complete', { permanentUrl });
+
+      // Replace the placeholder with the actual URL
+      processedHtml = processedHtml.replace(fullMatch, permanentUrl);
+
+      generatedImages.push({
+        description,
+        permanentUrl,
+        type: 'generated',
+        success: true
+      });
+    } catch (error) {
+      log(LogType.ERROR, 'Failed to process image placeholder', {
+        description,
+        error: error.message
+      });
+      
+      // Replace with a placeholder image on failure
+      processedHtml = processedHtml.replace(
+        fullMatch,
+        'https://placehold.co/600x400/e2e8f0/64748b?text=Image+Generation+Failed'
+      );
+
+      generatedImages.push({
+        description,
+        type: 'generated',
+        success: false,
+        error: error.message
+      });
+    }
+  }
+
+  log(LogType.INFO, 'Image placeholder processing complete', {
+    processed: matches.length,
+    successful: generatedImages.filter(i => i.success).length
+  });
+
+  return { html: processedHtml, generatedImages };
+}

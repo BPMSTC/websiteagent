@@ -189,10 +189,30 @@ Images may be provided in the configuration. When using images:
 3. Use appropriate sizing with Tailwind classes
 4. Place images contextually within the content
 
-If the content would benefit from an image but none is provided, include a comment in your message like:
-"This section would benefit from a diagram showing [description]. Would you like me to generate one?"
+### Generating New Images
 
-When an image is generated and provided to you, incorporate it naturally into the document.
+You can request AI-generated images at ANY time by using this placeholder format in your HTML:
+
+```html
+<img src="[IMAGE: detailed description of the image]" alt="descriptive alt text" class="...">
+```
+
+The system will automatically:
+1. Detect the `[IMAGE: ...]` placeholder
+2. Generate the image using AI
+3. Replace the placeholder with a permanent URL
+
+Use this format whenever:
+- The initial page needs images
+- A user asks you to add an image
+- A user asks you to replace, change, or regenerate an existing image
+
+When a user says "change the image to show X" or "make the image show Y instead", replace the existing `<img>` tag's src with a new `[IMAGE: new description]` placeholder. Be specific and detailed in your descriptions for best results.
+
+Example of replacing an image:
+- User says: "Make the header image show a red barn instead"
+- You replace: `<img src="https://res.cloudinary.com/..." ...>` 
+- With: `<img src="[IMAGE: rustic red barn in countryside with green fields]" alt="Red barn" class="...">`
 
 ---
 
